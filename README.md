@@ -14,7 +14,7 @@
 
 ​	进入加密项后点击ADB开关，将ADB开关开启
 
-​	<img src=".\Images\03.jpg" alt="03" style="zoom:10%;" />         <img src=".\04.jpg" alt="04" style="zoom:10%;" />、
+​	<img src=".\Images\03.jpg" alt="03" style="zoom:10%;" />         <img src=".\Images\04.jpg" alt="04" style="zoom:10%;" />、
 
 #### (二)  安装软件
 
