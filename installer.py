@@ -99,10 +99,15 @@ def Uninstallation():
     uninstallpackage = input("请输入要卸载的包名：")
     print(f"即将卸载: {uninstallpackage}, 请确认包名是否正确")
     os.system("pause")
-    if os.system(f"adb uninstall {uninstallpackage}") == 0:
-        print("卸载成功")
+    if input("请确认卸载方式 1: 自动卸载 2: 手动卸载 (defule: 2)") != '1':
+        print(f"请\033[1;31m右键这条信息\033[0m，或复制:  pm uninstall {uninstallpackage}，并\033[1;31m点击回车!\033[0m")
+        print("输入后，请手动输入exit并回车")
+        os.system(f"echo pm install -g /data/local/tmp/{uninstallpackage} | clip")
+        if os.system("adb shell"):
+            print("\033[1;31m启动命令行失败，请截图并联系作者\033[0m")
     else:
-        print("\033[1;31m卸载失败，请截图并联系作者\033[0m")
+        if os.system(f"adb shell pm uninstall {uninstallpackage}"):
+            print("\033[1;31m自动卸载失败，请尝试使用手动安装截图并联系作者\033[0m")
         
 def DisableAutonavi():
     print("此功能的原理是禁用原车机导航，仪表盘上的地图显示和车道显示可能会失效")
