@@ -102,8 +102,8 @@ def Uninstallation():
     if input("请确认卸载方式 1: 自动卸载 2: 手动卸载 (defule: 2)") != '1':
         print(f"请\033[1;31m右键这条信息\033[0m，或复制:  pm uninstall {uninstallpackage}，并\033[1;31m点击回车!\033[0m")
         print("输入后，请手动输入exit并回车")
-        os.system(f"echo pm install -g /data/local/tmp/{uninstallpackage} | clip")
-        if os.system("adb shell"):
+        os.system(f"echo pm uninstall {uninstallpackage} | clip")
+        if os.system("adb shell") != 0:
             print("\033[1;31m启动命令行失败，请截图并联系作者\033[0m")
     else:
         if os.system(f"adb shell pm uninstall {uninstallpackage}"):
