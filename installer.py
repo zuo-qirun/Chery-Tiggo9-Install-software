@@ -3,10 +3,19 @@
 # 此代码由zuo-qirun/B站山本大佐在北京提供
 # V9版本 大版本更新！！新增禁用高德、打开高德头枕播放等多种功能！！
 
-import os, sys, easygui
+import os, sys, easygui, re
 print("本程序由Github zuo-qirun提供 使用请标明出处")
 print("本程序仅供学习和交流使用 遇到问题概不负责")
-print("若本程序出现问题，欢迎提交issues! 项目地址: https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/")
+print("若本程序出现问题，欢迎提交issues! 项目地址: https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/\n\n\n")
+
+print("---------------初始化---------------")
+os.system("adb devices")
+print("请检查上方输出在\033[1;31m\"List of devices attached\"下方\033[0m是否有\033[1;31m******* device\033[0m字样")
+print("若无\033[1;31m\"device\"\033[0m字样，请检查是否\033[1;31m连接车机或打开车机adb\033[0m")
+
+def isLegalString(string):
+    return re.match("^[a-zA-Z0-9_-().]*$", string)
+
 def chooseMode():
     print("************************选择模式******************************")
     print("0. 退出程序")
@@ -16,11 +25,11 @@ def chooseMode():
     print("4. 解禁原车机高德地图(恢复高德地图)")
     print("5. 头枕播放解决方案")
     print("6. adb输入指令模式")
-    mode = input("请输入模式(0, 1, 2, 3, 4, 5)")
+    mode = input("请输入模式(0, 1, 2, 3, 4, 5, 6): ")
     try:
         return int(mode)
     except:
-        print("输入异常，程序退出")
+        print("输入异常，请重新输入")
     
 def Installation():
     loop = True
@@ -32,7 +41,7 @@ def Installation():
             path = easygui.fileopenbox("选择安装包", "选择安装包", '*.apk')
             if path == None:
                 break
-        print(path)
+        print(f"您的文件路径: {path}")
         
         '''
         # 准备上传 检测是否更改文件名
@@ -45,10 +54,18 @@ def Installation():
         # 已弃用
         '''
         # 检测并生成新文件名
-        filenamewithspace = os.path.basename(path)
-        filename = ''
-        for i in filenamewithspace.split(' '):
-            filename = filename + i
+        filename = os.path.basename(path)
+        print(f"您的文件名：{filename}")
+        if not isLegalString(filename):
+            print("检测到您的文件名不合法，文件名仅能包含\033[1;31m英文字符 数字 () .\033[0m")
+            filename = input("请输入新文件名: ")
+            if filename == "":
+                filename = os.path.basename(path)
+            elif len(filename) <= 4 or filename[-4:] != ".apk":
+                filename = filename + ".apk"
+            print(f"您新输入的文件名：{filename}")
+        else:
+            print("您的文件名合法")
         if os.system(f"adb push \"{path}\" \"/data/local/tmp/{filename}\""):
             print("\033[1;31m上传失败，请截图并联系作者\033[0m")
         # os.system("adb shell ls -a /data/local/tmp/")   
@@ -119,27 +136,28 @@ def ADBMode():
         if os.system(command) != 0:
             print("\033[1;31m该条指令报错\033[0m")
 
-print("---------------初始化---------------")
-os.system("adb devices")
-print("请检查上方输出在\"List of devices attached\"下方是否有 ******* device 字样")
-print("若无\"device\"字样，请检查是否连接车机或打开车机adb")
+
 
 while True:
     mode = chooseMode()
-    os.system("cls")
-    if mode == 0:
-        sys.exit(0)
-    elif mode == 1:
-        Installation()
-    elif mode == 2:
-        Uninstallation()
-    elif mode == 3:
-        DisableAutonavi()
-    elif mode == 4:
-        EnableAutonavi()
-    elif mode == 5:
-        ShowSolution()
-    elif mode == 6:
-        ADBMode()
+    if mode != None:
+        if mode < 0 or mode > 6:
+            print("输入异常，请重新输入")
+        else:
+            os.system("cls")
+        if mode == 0:
+            sys.exit(0)
+        elif mode == 1:
+            Installation()
+        elif mode == 2:
+            Uninstallation()
+        elif mode == 3:
+            DisableAutonavi()
+        elif mode == 4:
+            EnableAutonavi()
+        elif mode == 5:
+            ShowSolution()
+        elif mode == 6:
+            ADBMode()
     os.system("pause")
     os.system("cls")
