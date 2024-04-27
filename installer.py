@@ -97,7 +97,7 @@ def Uninstallation():
     if input("是否需要列出所有包名？(Y/N, defult: N): ").upper() == "Y":
         os.system("adb shell pm list packages")
     uninstallpackage = input("请输入要卸载的包名：")
-    print(f"即将卸载: {uninstallpackage.upper}, 请确认包名是否正确")
+    print(f"即将卸载: {uninstallpackage}, 请确认包名是否正确")
     os.system("pause")
     if os.system(f"adb uninstall {uninstallpackage}") == 0:
         print("卸载成功")
