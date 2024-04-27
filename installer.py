@@ -14,7 +14,7 @@ print("请检查上方输出在\033[1;31m\"List of devices attached\"下方\033[
 print("若无\033[1;31m\"device\"\033[0m字样，请检查是否\033[1;31m连接车机或打开车机adb\033[0m")
 
 def isLegalString(string):
-    return re.match("^[a-zA-Z0-9_-().]*$", string)
+    return re.match("^[a-zA-Z0-9_\-\.\(\)]*$", string)
 
 def chooseMode():
     print("************************选择模式******************************")
