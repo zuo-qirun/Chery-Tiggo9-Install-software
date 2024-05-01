@@ -35,7 +35,7 @@ def Installation():
     loop = True
     while loop:
         print("选择要上传的文件")
-        path = easygui.fileopenbox("选择安装包", "选择安装包", '*.apk')
+        path = easygui.fileopenbox("选择安装包", "选择安装包", '*')
         if path == None:
             easygui.msgbox("请重新选择文件，若再次不选择文件将会退出安装")
             path = easygui.fileopenbox("选择安装包", "选择安装包", '*.apk')
@@ -55,15 +55,20 @@ def Installation():
         '''
         # 检测并生成新文件名
         filename = os.path.basename(path)
+        if filename[-4:] != ".apk":
+            print("\033[1;31m警告：您选择的文件后缀名不为.apk，请检查文件是否正确\033[0m")
+            print("已自动将文件后缀名改为apk")
+            filename = filename + ".apk"
         print(f"您的文件名：{filename}")
         if not isLegalString(filename):
             print("检测到您的文件名不合法，文件名仅能包含\033[1;31m英文字符 数字 () .\033[0m")
             filename = input("请输入新文件名: ")
             if filename == "":
-                filename = os.path.basename(path)
+                print("由于您未输入任何文件名，已将文件名改为The_apk_to_be_installed.apk")
+                filename = "The_apk_to_be_installed.apk"
             elif len(filename) <= 4 or filename[-4:] != ".apk":
                 filename = filename + ".apk"
-            print(f"您新输入的文件名：{filename}")
+                print(f"您新输入的文件名：{filename}")
         else:
             print("您的文件名合法")
         if os.system(f"adb push \"{path}\" \"/data/local/tmp/{filename}\""):
