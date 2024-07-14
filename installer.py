@@ -25,7 +25,8 @@ def chooseMode():
     print("4. 解禁原车机高德地图(恢复高德地图)")
     print("5. 头枕播放解决方案")
     print("6. adb输入指令模式")
-    mode = input("请输入模式(0, 1, 2, 3, 4, 5, 6): ")
+    print("7. 激活shizuku")
+    mode = input("请输入模式(0, 1, 2, 3, 4, 5, 6, 7): ")
     try:
         return int(mode)
     except:
@@ -145,13 +146,18 @@ def ADBMode():
             break
         if os.system(command) != 0:
             print("\033[1;31m该条指令报错\033[0m")
-
+def ActiveShizuku():
+    print("激活中...")
+    if os.system("adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh") == 0:
+        print("激活成功！")
+    else:
+        print("\033[1;31m激活失败，请截图并联系作者\033[0m")
 
 
 while True:
     mode = chooseMode()
     if mode != None:
-        if mode < 0 or mode > 6:
+        if mode < 0 or mode > 7:
             print("输入异常，请重新输入")
         else:
             os.system("cls")
@@ -169,5 +175,7 @@ while True:
             ShowSolution()
         elif mode == 6:
             ADBMode()
+        elif mode == 7:
+            ActiveShizuku()
     os.system("pause")
     os.system("cls")
