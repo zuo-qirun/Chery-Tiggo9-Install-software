@@ -1,6 +1,6 @@
 # !/usr/bin/env python
 # 使用源码请标注出处
-# 此代码由zuo-qirun/B站山本大佐在北京提供
+# 此代码由zuo-qirun/B站undefined_左提供
 # V9版本 大版本更新！！新增禁用高德、打开高德头枕播放等多种功能！！
 
 import os, sys, easygui, re
