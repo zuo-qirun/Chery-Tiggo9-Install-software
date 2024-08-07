@@ -1,3 +1,7 @@
+## 项目star历史
+
+<iframe style="width:100%;height:auto;min-width:600px;min-height:400px;" src="https://star-history.com/embed?secret=Z2hwX1NkRTZydWZOQmNMTDI3MWo4azA5YXBPQ095NzN0SjN1akNheA==#zuo-qirun/Chery-Tiggo9-Install-software&Date" frameBorder="0"></iframe>
+
 ### 必看！！使用说明！！！
 
 #### (一)  启用车机adb
