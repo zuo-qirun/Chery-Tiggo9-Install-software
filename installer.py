@@ -3,34 +3,34 @@
 # 此代码由zuo-qirun/B站undefined_左提供
 # V9版本 大版本更新！！新增禁用高德、打开高德头枕播放等多种功能！！
 
-import os, sys, easygui, re
-print("本程序由Github zuo-qirun提供 使用请标明出处")
-print("本程序仅供学习和交流使用 遇到问题概不负责")
-print("若本程序出现问题，欢迎提交issues! 项目地址: https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/\n\n\n")
+import os, sys, easygui, re, argparse
+import modechooser
 
 print("---------------初始化---------------")
-os.system("adb devices")
-print("请检查上方输出在\033[1;31m\"List of devices attached\"下方\033[0m是否有\033[1;31m******* device\033[0m字样")
-print("若无\033[1;31m\"device\"\033[0m字样，请检查是否\033[1;31m连接车机或打开车机adb\033[0m")
+
+modes = ["退出程序", "安装模式", "卸载模式(需要你知道卸载软件的包名)",
+         "解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", 
+         "解禁原车机高德地图(恢复原车机高德地图)", "头枕播放解决方案", 
+         "adb输入指令模式", "激活shizuku", "激活权限狗"]
+ModeChooser = modechooser.Mode(modes)
+
 
 def isLegalString(string):
     return re.match("^[a-zA-Z0-9_\-\.\(\)]*$", string)
 
 def chooseMode():
+    global ModeChooser
+    print("欢迎使用Chery-Tiggo9-Install-software")
+    print("本程序由Github zuo-qirun提供 使用请标明出处")
+    print("本程序仅供学习和交流使用 遇到问题概不负责")
+    print("若本程序出现问题，欢迎提交issues! 项目地址: https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/\n\n\n")
+    os.system("adb devices")
+    print("请检查上方输出在\033[1;31m\"List of devices attached\"下方\033[0m是否有\033[1;31m******* device\033[0m字样")
+    print("若无\033[1;31m\"device\"\033[0m字样，请检查是否\033[1;31m连接车机或打开车机adb\033[0m")
+
+
     print("************************选择模式******************************")
-    print("0. 退出程序")
-    print("1. 安装模式")
-    print("2. 卸载模式(需要你知道卸载软件的包名)")
-    print("3. 解决安装后高德与原车机高德HUD闪的问题(禁用高德地图)")
-    print("4. 解禁原车机高德地图(恢复高德地图)")
-    print("5. 头枕播放解决方案")
-    print("6. adb输入指令模式")
-    print("7. 激活shizuku")
-    mode = input("请输入模式(0, 1, 2, 3, 4, 5, 6, 7): ")
-    try:
-        return int(mode)
-    except:
-        print("输入异常，请重新输入")
+    return ModeChooser.getmode()
     
 def Installation():
     loop = True
@@ -153,14 +153,15 @@ def ActiveShizuku():
     else:
         print("\033[1;31m激活失败，请截图并联系作者\033[0m")
 
-
+def ActivePermissiondog():
+    print("激活中...")
+    if os.system("adb shell sh /storage/emulated/0/Android/data/com.web1n.permissiondog/files/starter.sh") == 0:
+        print("激活成功！")
+    else:
+        print("\033[1;31m激活失败，请截图并联系作者\033[0m")
 while True:
     mode = chooseMode()
-    if mode != None:
-        if mode < 0 or mode > 7:
-            print("输入异常，请重新输入")
-        else:
-            os.system("cls")
+    if mode != ModeChooser.wrong_mode:
         if mode == 0:
             sys.exit(0)
         elif mode == 1:
@@ -177,5 +178,7 @@ while True:
             ADBMode()
         elif mode == 7:
             ActiveShizuku()
+        elif mode == 8:
+            ActivePermissiondog()
     os.system("pause")
     os.system("cls")
