@@ -1,6 +1,3 @@
-# 附加条款
-## 该软件严禁任何未经授权的商用分发！！！
-
 # GNU GENERAL PUBLIC LICENSE
 
 Version 3, 2007年6月29日
