@@ -5,6 +5,7 @@
 
 import os, sys, easygui, re, argparse
 import modechooser
+import OutputColoredText as oct
 
 print("---------------初始化---------------")
 
@@ -25,8 +26,13 @@ def chooseMode():
     print("本程序仅供学习和交流使用 遇到问题概不负责")
     print("若本程序出现问题，欢迎提交issues! 项目地址: https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/\n\n\n")
     os.system("adb devices")
-    print("请检查上方输出在\033[1;31m\"List of devices attached\"下方\033[0m是否有\033[1;31m******* device\033[0m字样")
-    print("若无\033[1;31m\"device\"\033[0m字样，请检查是否\033[1;31m连接车机或打开车机adb\033[0m")
+    print(oct.ColoredText( [ ("请检查上方输出在", "normal"), ("\"List of devices attached\"", "red"), 
+                            ("下方是否有", "normal"), 
+                            ("\"******* device\"", "red"), 
+                            ("字样", "normal") ] ))
+    print(oct.ColoredText([ ("若无", "normal"), 
+                           ("\"device\"", "red"), 
+                            ("字样，请检查是否连接车机或打开车机adb", "normal") ]))
 
 
     print("************************选择模式******************************")
@@ -34,6 +40,7 @@ def chooseMode():
     
 def Installation():
     loop = True
+
     while loop:
         print("选择要上传的文件")
         path = easygui.fileopenbox("选择安装包", "选择安装包", '*')
@@ -44,53 +51,48 @@ def Installation():
                 break
         print(f"您的文件路径: {path}")
         
-        '''
-        # 准备上传 检测是否更改文件名
-        filename = input("\033[1;31m注意阅读此处通知！！！\033[0m 是否更改文件名? 文件名\033[1;31m不能含有中文或空格!! 若含有中文或空格请在此处输入新文件名!!!!\033[0m 若无请点击回车键跳过此流程: ")
-        if filename == "":
-            filename = os.path.basename(path)
-        elif len(filename) <= 4 or filename[-4:] != ".apk":
-            filename = filename + ".apk"
-        print(filename)
-        # 已弃用
-        '''
         # 检测并生成新文件名
         filename = os.path.basename(path)
         if filename[-4:] != ".apk":
-            print("\033[1;31m警告：您选择的文件后缀名不为.apk，请检查文件是否正确\033[0m")
-            print("已自动将文件后缀名改为apk")
+            print(oct.ColoredText([("警告：您选择的文件后缀名不为.apk，请检查文件是否正确", "red")]))
+            print(oct.ColoredText([("已自动将文件后缀名改为apk", "normal")]))
             filename = filename + ".apk"
         print(f"您的文件名：{filename}")
+
         if not isLegalString(filename):
-            print("检测到您的文件名不合法，文件名仅能包含\033[1;31m英文字符 数字 () .\033[0m")
-            filename = input("请输入新文件名: ")
+            print(oct.ColoredText([("检测到您的文件名不合法，文件名仅能包含", "normal"), 
+                                   ("英文字符 数字 () .", "red")]))
+            filename = input(oct.ColoredText([("请输入新文件名: ", "normal")]))
             if filename == "":
-                print("由于您未输入任何文件名，已将文件名改为The_apk_to_be_installed.apk")
+                print(oct.ColoredText([("由于您未输入任何文件名，已将文件名改为The_apk_to_be_installed.apk", "normal")]))
                 filename = "The_apk_to_be_installed.apk"
             elif len(filename) <= 4 or filename[-4:] != ".apk":
                 filename = filename + ".apk"
-                print(f"您新输入的文件名：{filename}")
+                print(oct.ColoredText([(f"您新输入的文件名：{filename}", "normal")]))
         else:
-            print("您的文件名合法")
+            print(oct.ColoredText([("您的文件名合法", "normal")]))
+
         if os.system(f"adb push \"{path}\" \"/data/local/tmp/{filename}\""):
-            print("\033[1;31m上传失败，请截图并联系作者\033[0m")
-        # os.system("adb shell ls -a /data/local/tmp/")   
+            print(oct.ColoredText([("上传失败，请截图并联系作者", "red")]))
         
         print("---------------正在安装---------------")
         if input("请确认安装方式 1: 自动安装 2: 手动安装 (defule: 2)") != '1':
-            print(f"请\033[1;31m右键这条信息\033[0m，或复制:  pm install -g /data/local/tmp/{filename}，并\033[1;31m点击回车!\033[0m")
+            print(oct.ColoredText([("请", "normal"), 
+                                   ("右键这条信息", "red"), 
+                                   (f"，或复制:  pm install -g /data/local/tmp/{filename}, 并", "normal"), 
+                                   ("点击回车", "red")]))
             print("输入后，请手动输入exit并回车")
             os.system(f"echo pm install -g /data/local/tmp/{filename} | clip")
             if os.system("adb shell"):
-                print("\033[1;31m启动命令行失败，请截图并联系作者\033[0m")
+                print(oct.ColoredText([("启动命令行失败，请截图并联系作者", "red")]))
         else:
             if os.system(f"adb shell pm install -g /data/local/tmp/{filename}"):
-                print("\033[1;31m自动安装失败，请尝试使用手动安装截图并联系作者\033[0m")
+                print(oct.ColoredText([("自动安装失败，请尝试使用手动安装", "red")]))
             
         ans = input("是否清除缓存(Y/N, defult: N):")
         if ans.upper() == 'Y':
             if os.system("adb shell rm -rf /data/local/tmp/*"): #应该没写错吧......
-                print("\033[1;31m清除失败，请截图并联系作者\033[0m")
+                print(oct.ColoredText([("清除失败，请截图并联系作者", "red")]))
             print("清除成功")
             
         loopans = input("是否继续安装软件? (Y/N, defult: N):")
@@ -161,7 +163,8 @@ def ActivePermissiondog():
         print("\033[1;31m激活失败，请截图并联系作者\033[0m")
 while True:
     mode = chooseMode()
-    if mode != ModeChooser.wrong_mode:
+    if mode != ModeChooser.wrong_code:
+        os.system("cls")
         if mode == 0:
             sys.exit(0)
         elif mode == 1:
