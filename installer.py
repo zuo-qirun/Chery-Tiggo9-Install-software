@@ -99,7 +99,11 @@ def Installation():
         loop = True if loopans == 'Y' or loopans == 'N' else False
 
 def Uninstallation():
-    print("此功能需有一定android开发基础，若不理解什么是包名，请安装\033[1;31mES文件管理器\033[0m或\033[1;31mMT管理器\033[0m进行卸载操作")
+    print(oct.ColoredText([("此功能需有一定android开发基础，若不理解什么是包名，请安装", "normal"), 
+                           ("ES文件管理器", "red"), 
+                           ("或", "normal"), 
+                           ("MT管理器", "red"), 
+                            ("进行卸载操作", "normal")]))
     if input("是否退出该模式？(Y/N, defult: N)").upper() == 'Y':
         return
     if input("是否需要列出所有包名？(Y/N, defult: N): ").upper() == "Y":
@@ -108,14 +112,17 @@ def Uninstallation():
     print(f"即将卸载: {uninstallpackage}, 请确认包名是否正确")
     os.system("pause")
     if input("请确认卸载方式 1: 自动卸载 2: 手动卸载 (defule: 2)") != '1':
-        print(f"请\033[1;31m右键这条信息\033[0m，或复制:  pm uninstall {uninstallpackage}，并\033[1;31m点击回车!\033[0m")
+        print(oct.ColoredText([("请", "normal"), 
+                               ("右键这条信息", "red"), 
+                               (f"，或复制:  pm uninstall {uninstallpackage}, 并", "normal"), 
+                               ("点击回车", "red")]))
         print("输入后，请手动输入exit并回车")
         os.system(f"echo pm uninstall {uninstallpackage} | clip")
         if os.system("adb shell") != 0:
-            print("\033[1;31m启动命令行失败，请截图并联系作者\033[0m")
+            print(oct.ColoredText([("启动命令行失败，请截图并联系作者", "red")]))
     else:
         if os.system(f"adb shell pm uninstall {uninstallpackage}"):
-            print("\033[1;31m自动卸载失败，请尝试使用手动安装截图并联系作者\033[0m")
+            print(oct.ColoredText([("自动卸载失败，请尝试使用手动卸载", "red")]))
         
 def DisableAutonavi():
     print("此功能的原理是禁用原车机导航，仪表盘上的地图显示和车道显示可能会失效")
@@ -123,7 +130,7 @@ def DisableAutonavi():
         if os.system("adb shell pm disable-user com.autonavi.amapauto") == 0:
             print("禁用成功")
         else:
-            print("\033[1;31m禁用失败，请截图并联系作者\033[0m")
+            print(oct.ColoredText([("禁用失败，请截图并联系作者", "red")]))
 
 def EnableAutonavi():
     print("此功能是启用原车机导航，若与新版本高德冲突，HUD抬头显示功能可能会闪来闪去")
@@ -131,7 +138,7 @@ def EnableAutonavi():
         if os.system("adb shell pm enable com.autonavi.amapauto") == 0:
             print("启用成功")
         else:
-            print("\033[1;31m启用失败，请截图并联系作者\033[0m")
+            print(oct.ColoredText([("启用失败，请截图并联系作者", "red")]))
 
 def ShowSolution():
     print("先进入驾享模式")
@@ -139,6 +146,7 @@ def ShowSolution():
     print("一直点击播报 进入高级设置")
     print("音频通道选择一个能从头枕播出来的通道 (我这里是0号通道)")
     print("返回高级设置 将使用高版本api改为1")
+
 def ADBMode():
     print("此模式对于非专业人员来说具有一定风险，请务必确保安全！！！")
     print("请正常输入adb指令，输入exit退出")
@@ -147,20 +155,23 @@ def ADBMode():
         if command == "exit":
             break
         if os.system(command) != 0:
-            print("\033[1;31m该条指令报错\033[0m")
+            print(oct.ColoredText([("该条指令报错，请检查输入是否正确", "red")]))
+            
 def ActiveShizuku():
     print("激活中...")
     if os.system("adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh") == 0:
         print("激活成功！")
     else:
-        print("\033[1;31m激活失败，请截图并联系作者\033[0m")
+        print(oct.ColoredText([("激活失败，请截图并联系作者", "red")]))
 
 def ActivePermissiondog():
     print("激活中...")
     if os.system("adb shell sh /storage/emulated/0/Android/data/com.web1n.permissiondog/files/starter.sh") == 0:
         print("激活成功！")
     else:
-        print("\033[1;31m激活失败，请截图并联系作者\033[0m")
+        print(oct.ColoredText([("激活失败，请截图并联系作者", "red")]))
+
+        
 while True:
     mode = chooseMode()
     if mode != ModeChooser.wrong_code:
