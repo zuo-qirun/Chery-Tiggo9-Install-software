@@ -103,7 +103,7 @@ def Uninstallation():
                            ("ES文件管理器", "red"), 
                            ("或", "normal"), 
                            ("MT管理器", "red"), 
-                            ("进行卸载操作", "normal")]))
+                           ("进行卸载操作", "normal")]))
     if input("是否退出该模式？(Y/N, defult: N)").upper() == 'Y':
         return
     if input("是否需要列出所有包名？(Y/N, defult: N): ").upper() == "Y":
@@ -171,7 +171,7 @@ def ActivePermissiondog():
     else:
         print(oct.ColoredText([("激活失败，请截图并联系作者", "red")]))
 
-        
+
 while True:
     mode = chooseMode()
     if mode != ModeChooser.wrong_code:
