@@ -12,7 +12,7 @@ print("---------------初始化---------------")
 modes = ["退出程序", "安装模式", "卸载模式(需要你知道卸载软件的包名)",
          "解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", 
          "解禁原车机高德地图(恢复原车机高德地图)", "头枕播放解决方案", 
-         "adb输入指令模式", "激活shizuku", "激活权限狗"]
+         "adb输入指令模式", "激活shizuku", "激活权限狗", "清除缓存"]
 ModeChooser = modechooser.Mode(modes)
 
 
@@ -76,6 +76,15 @@ def Installation():
             print(oct.ColoredText([("上传失败，请截图并联系作者", "red")]))
         
         print("---------------正在安装---------------")
+        print(oct.ColoredText([("请", "normal"), 
+                                ("右键这条信息", "red"), 
+                                (f"，或复制:  pm install -g /data/local/tmp/{filename}, 并", "normal"), 
+                                ("点击回车", "red")]))
+        print("输入后，请手动输入exit并回车")
+        os.system(f"echo pm install -g /data/local/tmp/{filename} | clip")
+        if os.system("adb shell"):
+            print(oct.ColoredText([("启动命令行失败或命令行命令出错，请截图并联系作者", "red")]))
+        """
         if input("请确认安装方式 1: 自动安装 2: 手动安装 (defule: 2)") != '1':
             print(oct.ColoredText([("请", "normal"), 
                                    ("右键这条信息", "red"), 
@@ -88,13 +97,13 @@ def Installation():
         else:
             if os.system(f"adb shell pm install -g /data/local/tmp/{filename}"):
                 print(oct.ColoredText([("自动安装失败，请尝试使用手动安装", "red")]))
-            
+        
         ans = input("是否清除缓存(Y/N, defult: N):")
         if ans.upper() == 'Y':
             if os.system("adb shell rm -rf /data/local/tmp/*"): #应该没写错吧......
                 print(oct.ColoredText([("清除失败，请截图并联系作者", "red")]))
             print("清除成功")
-            
+        """
         loopans = input("是否继续安装软件? (Y/N, defult: N):")
         loop = True if loopans == 'Y' or loopans == 'N' else False
 
@@ -171,6 +180,17 @@ def ActivePermissiondog():
     else:
         print(oct.ColoredText([("激活失败，请截图并联系作者", "red")]))
 
+def DelCache():
+    print("当前/data/local/tmp目录下已用大小: ")
+    os.system("adb shell \"cd /data/local/tmp/ && du -sh\"")
+    ans = input("是否列出该目录下文件？(Y, N) (defult: Y)")
+    if not ans.upper() == "N":
+        os.system("adb shell \"cd /data/local/tmp/ && ls -lh\"")
+    ans = input(oct.ColoredText([("二次确认：是否清除缓存？(Y, N) (defult: Y)", "red")]))
+    if not ans.upper() == "N":
+        if os.system("adb shell rm -rf /data/local/tmp/*"):
+            print(oct.ColoredText([("清除失败，请截图并联系作者", "red")]))
+        print("清除成功")
 
 while True:
     mode = chooseMode()
@@ -194,5 +214,7 @@ while True:
             ActiveShizuku()
         elif mode == 8:
             ActivePermissiondog()
+        elif mode == 9:
+            DelCache()
     os.system("pause")
     os.system("cls")
