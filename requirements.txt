@@ -1,2 +1,4 @@
 easygui
+requests
+tqdm
 #pywin32
