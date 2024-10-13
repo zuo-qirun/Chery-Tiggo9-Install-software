@@ -190,7 +190,7 @@ def DelCache():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A Installer for Chery-Tiggo9')
-    parser.add_argument('-v', '--version', action='version', version='9.6.1')
+    parser.add_argument('-v', '--version', action='version', version='9.6.3')
     parser.add_argument('directory', nargs='?', default=None, help='an optional directory to process')
     args = parser.parse_args()
 

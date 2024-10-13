@@ -41,10 +41,6 @@ def update_software():
             if ans.lower() == "n":
                 print("取消升级")
             else:
-                with open("installer.exe", "rb") as original_file:
-                    original_data = original_file.read()
-                with open("installer.exe.bak", "wb") as backup_file:
-                    backup_file.write(original_data)
                 print("开始升级")
                 print("正在下载升级包...")
                 update_result = requests.get(update_url)
