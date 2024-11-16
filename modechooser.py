@@ -27,6 +27,7 @@ class Mode:
             mode_input = int(input(f"请输入模式序号(0-{len(self.modes)-1}): "))
             if mode_input < 0 or mode_input > len(self.modes) - 1:
                 print(self.wrong_input_message)
+                print(f"mode_input: {mode_input}")
                 return self.wrong_code
             else:
                 return mode_input

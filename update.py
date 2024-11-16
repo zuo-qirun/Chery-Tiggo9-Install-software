@@ -21,14 +21,12 @@ def update_software():
     try:
         response = requests.get(url)
         data = json.loads(response.text)
+        update_url, version = data["update_url"], data["version"]
+        print("最新版本：", version)
+        print("更新日志：\n", data["update_log"])
 
     except:
         print("获取升级信息失败")
-
-    update_url, version = data["update_url"], data["version"]
-    version = data["version"]
-    print("最新版本：", version)
-    print("更新日志：\n", data["update_log"])
 
     # 解析链接
     try:

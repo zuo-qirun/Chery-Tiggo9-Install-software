@@ -7,6 +7,10 @@ import os, sys, easygui, re, subprocess, argparse
 import modechooser
 import OutputColoredText as oct
 
+# 常量
+
+VERSION = '9.7.1'
+
 def isLegalString(string):
     return re.match("^[a-zA-Z0-9()._-]*$", string)
 
@@ -93,7 +97,7 @@ def Installation():
         path = easygui.fileopenbox("选择安装包", "选择安装包", '*')
         if path == None:
             easygui.msgbox("请重新选择文件，若再次不选择文件将会退出安装")
-            path = easygui.fileopenbox("选择安装包", "选择安装包", '*.apk')
+            path = easygui.fileopenbox("选择安装包", "选择安装包", '*')
             if path == None:
                 break
         print(f"您的文件路径: {path}")
@@ -190,7 +194,7 @@ def DelCache():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A Installer for Chery-Tiggo9')
-    parser.add_argument('-v', '--version', action='version', version='9.6.3')
+    parser.add_argument('-v', '--version', action='version', version=VERSION)
     parser.add_argument('directory', nargs='?', default=None, help='an optional directory to process')
     args = parser.parse_args()
 
@@ -201,10 +205,18 @@ if __name__ == '__main__':
 
     print("---------------初始化---------------")
 
-    modes = ["退出程序", "安装模式", "卸载模式(需要你知道卸载软件的包名)",
-            "解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", 
-            "解禁原车机高德地图(恢复原车机高德地图)", "头枕播放解决方案", 
-            "adb输入指令模式", "激活shizuku", "激活权限狗", "清除缓存", "检查更新"]
+    modes = [oct.ColoredText([("退出程序", "red")]), 
+             oct.ColoredText([("安装软件", "yellow")]), 
+             oct.ColoredText([("卸载软件(需要你知道卸载软件的包名)", "yellow")]),
+             oct.ColoredText([("解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", "magenta")]), 
+             oct.ColoredText([("解禁原车机高德地图(恢复原车机高德地图)", "magenta")]), 
+             oct.ColoredText([("头枕播放解决方案", "cyan")]), 
+             oct.ColoredText([("adb输入指令模式", "cyan")]), 
+             oct.ColoredText([("激活shizuku", "blue")]),
+             oct.ColoredText([("激活权限狗", "blue")]), 
+             oct.ColoredText([("清除缓存", "green")]),  
+             oct.ColoredText([("获取帮助", "green")]), 
+             oct.ColoredText([("更新程序", "green")])]
     ModeChooser = modechooser.Mode(modes)
 
     while True:
@@ -232,6 +244,8 @@ if __name__ == '__main__':
             elif mode == 9:
                 DelCache()
             elif mode == 10:
+                os.system("start https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/wiki")
+            elif mode == 11:
                 # subprocess.run(['runas', '/user:Administrator', '"pythonw ' + script_path + '"'])
                 subprocess.Popen("./update.exe")
                 sys.exit(0)
