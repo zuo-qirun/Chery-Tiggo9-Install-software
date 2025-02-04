@@ -154,3 +154,6 @@ cython_debug/
 
 # Release
 .zip
+
+# VS Code
+.vscode/

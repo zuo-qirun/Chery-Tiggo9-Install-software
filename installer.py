@@ -157,7 +157,7 @@ def ShowSolution():
 
 def ADBMode():
     print("此模式对于非专业人员来说具有一定风险，请务必确保安全！！！")
-    print("请正常输入adb指令，输入exit退出")
+    print("请正常输入shell指令，输入exit退出")
     while True:
         command = input("ADB> ")
         if command == "exit":

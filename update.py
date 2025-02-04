@@ -2,7 +2,6 @@ import requests
 import json
 import os
 import subprocess
-import tqdm
 
 def update_software():
     # 备份当前版本
