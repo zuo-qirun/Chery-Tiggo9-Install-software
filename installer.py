@@ -6,10 +6,11 @@
 import os, sys, easygui, re, subprocess, argparse
 import modechooser
 import OutputColoredText as oct
+from pyperclip import copy
 
 # 常量
 
-VERSION = '9.7.1'
+VERSION = '9.8.1'
 
 def isLegalString(string):
     return re.match("^[a-zA-Z0-9()._-]*$", string)
@@ -34,7 +35,7 @@ def chooseMode():
     return ModeChooser.getmode()
 
 
-def Install(path: str):
+def UploadAndInstall(path: str, install = True, default_text = "") -> str:
     # 检测并生成新文件名
     filename = os.path.basename(path)
     if filename[-4:] != ".apk":
@@ -48,17 +49,24 @@ def Install(path: str):
                                 ("英文字符 数字 () .", "red")]))
         filename = input(oct.ColoredText([("请输入新文件名: ", "normal")]))
         if filename == "":
-            print(oct.ColoredText([("由于您未输入任何文件名，已将文件名改为The_apk_to_be_installed.apk", "normal")]))
-            filename = "The_apk_to_be_installed.apk"
+            print(oct.ColoredText([(f"由于您未输入任何文件名，已将文件名改为The_apk_to_be_installed{default_text}.apk", "normal")]))
+            filename = f"The_apk_to_be_installed{default_text}.apk"
         elif len(filename) <= 4 or filename[-4:] != ".apk":
             filename = filename + ".apk"
             print(oct.ColoredText([(f"您新输入的文件名：{filename}", "normal")]))
     else:
         print(oct.ColoredText([("您的文件名合法", "normal")]))
 
+    UploadFile(path, filename)
+    if install:
+        InstallByAdb(filename)
+    return filename
+
+def UploadFile(path: str, filename: str):
     if os.system(f"adb push \"{path}\" \"/data/local/tmp/{filename}\""):
         print(oct.ColoredText([("上传失败，请截图并联系作者", "red")]))
-    
+
+def InstallByAdb(filename: str):
     print("---------------正在安装---------------")
     print(oct.ColoredText([("请", "normal"), 
                             ("右键这条信息", "red"), 
@@ -101,10 +109,40 @@ def Installation():
             if path == None:
                 break
         print(f"您的文件路径: {path}")
-        Install(path)
+        UploadAndInstall(path)
         
         loopans = input("是否继续安装软件? (Y/N, defult: N):")
         loop = True if loopans == 'Y' or loopans == 'N' else False
+
+def LoopInstall():
+    # 选择文件夹
+    path = easygui.diropenbox("选择文件夹", "选择文件夹")
+    if path == None:
+        easygui.msgbox("请重新选择文件夹，若再次不选择文件夹将会退出安装")
+        path = easygui.diropenbox("选择文件夹", "选择文件夹")
+        if path == None:
+            return
+        print(f"您的文件夹路径: {path}")
+
+    # 列出文件夹下所有文件
+    files = os.listdir(path)
+    cmdstr = ""
+    num = 0
+    for file in files:
+        if file[-4:] == ".apk":
+            num += 1
+            print(f"正在处理: {num}. {file}")
+            cmdstr += 'pm install -g /data/local/tmp/' + UploadAndInstall(os.path.join(path, file), False, str(num)) + ' & '
+    print(oct.ColoredText([("请", "normal"), 
+                            ("右键这条信息", "red"), 
+                            (f"，或复制:  {cmdstr[:-2]}, 并", "normal"), 
+                            ("点击回车", "red")]))
+    print(oct.ColoredText([(f"请等待出现{len(files)}个success后，再输入exit!!!!", "green")]))
+    print("输入后，请手动输入exit并回车")
+    copy(cmdstr[:-2])
+    os.system("adb shell")
+
+            
 
 def Uninstallation():
     print(oct.ColoredText([("此功能需有一定android开发基础，若不理解什么是包名，请安装", "normal"), 
@@ -200,7 +238,7 @@ if __name__ == '__main__':
 
     if args.directory is not None:
         print(f"Processing directory: {args.directory}")
-        Install(args.directory)
+        UploadAndInstall(args.directory)
         sys.exit(0)
 
     print("---------------初始化---------------")
@@ -216,7 +254,8 @@ if __name__ == '__main__':
              oct.ColoredText([("激活权限狗", "blue")]), 
              oct.ColoredText([("清除缓存", "green")]),  
              oct.ColoredText([("获取帮助", "green")]), 
-             oct.ColoredText([("更新程序", "green")])]
+             oct.ColoredText([("更新程序", "green")]),
+             oct.ColoredText([("批量安装", "yellow")])]
     ModeChooser = modechooser.Mode(modes)
 
     while True:
@@ -249,5 +288,7 @@ if __name__ == '__main__':
                 # subprocess.run(['runas', '/user:Administrator', '"pythonw ' + script_path + '"'])
                 subprocess.Popen("./update.exe")
                 sys.exit(0)
+            elif mode == 12:
+                LoopInstall()
         os.system("pause")
         os.system("cls")
