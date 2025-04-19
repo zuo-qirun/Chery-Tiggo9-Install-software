@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import subprocess
+from tqdm import tqdm
 
 def update_software():
     # 备份当前版本
@@ -16,9 +17,10 @@ def update_software():
     except:
         print("备份失败")
     # 获取升级信息
+    print("正在获取升级信息...")
     url = "https://api.zuoqirun.top/software/Chery-Tiggo9-Install-software/latest.json"
     try:
-        response = requests.get(url)
+        response = requests.get(url, stream=True)
         data = json.loads(response.text)
         update_url, version = data["update_url"], data["version"]
         print("最新版本：", version)
@@ -40,10 +42,12 @@ def update_software():
             else:
                 print("开始升级")
                 print("正在下载升级包...")
-                update_result = requests.get(update_url)
-                print("下载完成，正在安装...")
+                update_result = requests.get(update_url, stream=True)
+                total_size = int(update_result.headers.get('content-length', 0))
                 with open("installer.exe", "wb") as f:
-                    f.write(update_result.content)
+                    for data in tqdm(update_result.iter_content(chunk_size=4096), total=total_size//4096, unit='KB', unit_scale=True):
+                        f.write(data)
+                subprocess.run(["installer.exe", "/S"], shell=True)
                 print("升级成功")
     except OSError:
         print("未找到安装程序或安装程序已损坏")

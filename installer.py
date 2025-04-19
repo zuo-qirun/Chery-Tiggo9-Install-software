@@ -8,13 +8,41 @@ import modechooser
 import OutputColoredText as oct
 from pyperclip import copy
 
-# 常量
+########################################## 常量 ##########################################
 
-VERSION = '9.8.1'
+VERSION = '9.9.0'
 
+# 模式选择
+modes = [oct.ColoredText([("退出程序", "red")]), 
+            oct.ColoredText([("安装软件", "yellow")]), 
+            oct.ColoredText([("批量安装软件", "yellow")]), 
+            oct.ColoredText([("卸载软件(需要你知道卸载软件的包名)", "yellow")]),
+            oct.ColoredText([("快捷指令", "magenta")]), 
+            oct.ColoredText([("adb输入指令模式", "cyan")]), 
+            oct.ColoredText([("清除缓存", "green")]),  
+            oct.ColoredText([("获取帮助", "green")]), 
+            oct.ColoredText([("更新程序", "green")])]
+submodes = [oct.ColoredText([("返回上一级", "red")]),  # 0
+            oct.ColoredText([("头枕播放解决方案", "normal")]), # 1
+            oct.ColoredText([("解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", "magenta")]),  # 2
+            oct.ColoredText([("解禁原车机高德地图(恢复原车机高德地图)", "magenta")]), # 3
+            oct.ColoredText([("激活shizuku", "blue")]), # 4
+            oct.ColoredText([("激活权限狗(仅一次 下次重启后无效)", "blue")]), # 5
+            oct.ColoredText([("激活tasker相关", "blue")]), # 6
+            oct.ColoredText([("激活无障碍管理器", "blue")]), # 7
+            oct.ColoredText([("激活小黑屋", "blue")]), # 8
+            oct.ColoredText([("开启无线调试(port: 5555)", "yellow")])] # 9
+
+            
+ModeChooser = modechooser.Mode(modes)
+SubModeChooser = modechooser.Mode(submodes)
+
+########################################## 字符串处理相关 ##########################################
 def isLegalString(string):
     return re.match("^[a-zA-Z0-9()._-]*$", string)
 
+
+########################################## 模式选择 ##########################################
 def chooseMode():
     global ModeChooser
     print("欢迎使用Chery-Tiggo9-Install-software")
@@ -34,7 +62,35 @@ def chooseMode():
     print("************************选择模式******************************")
     return ModeChooser.getmode()
 
+def submenu():
+    global SubModeChooser
+    while True:
+        submode = SubModeChooser.getmode()
+        os.system('cls')
+        if submode == 0:
+            return
+        elif submode == 1:
+            ShowSolution()
+        elif submode == 2:
+            DisableAutonavi()
+        elif submode == 3:
+            EnableAutonavi()
+        elif submode == 4:
+            ExecCommand('adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh')
+        elif submode == 5:
+            ExecCommand("adb shell sh /storage/emulated/0/Android/data/com.web1n.permissiondog/files/stopper.sh")
+        elif submode == 6:
+            ExecCommand('adb shell pm grant net.dinglisch.android.taskerm android.permission.READ_LOGS')
+            ExecCommand('adb shell pm grant net.dinglisch.android.taskerm android.permission.WRITE_SECURE_SETTINGS')
+        elif submode == 7:
+            ExecCommand('adb shell pm grant com.accessibilitymanager android.permission.WRITE_SECURE_SETTINGS')
+        elif submode == 8:
+            ExecCommand('adb shell dpm set-device-owner web1n.stopapp/.receiver.AdminReceiver')
+        elif submode == 9:
+            ExecCommand('adb tcpip 5555')
+        os.system('pause & cls')
 
+########################################## 安装相关 ############################################
 def UploadAndInstall(path: str, install = True, default_text = "") -> str:
     # 检测并生成新文件名
     filename = os.path.basename(path)
@@ -76,26 +132,6 @@ def InstallByAdb(filename: str):
     os.system(f"echo pm install -g /data/local/tmp/{filename} | clip")
     if os.system("adb shell"):
         print(oct.ColoredText([("启动命令行失败或命令行命令出错，请截图并联系作者", "red")]))
-    """
-    if input("请确认安装方式 1: 自动安装 2: 手动安装 (defule: 2)") != '1':
-        print(oct.ColoredText([("请", "normal"), 
-                                ("右键这条信息", "red"), 
-                                (f"，或复制:  pm install -g /data/local/tmp/{filename}, 并", "normal"), 
-                                ("点击回车", "red")]))
-        print("输入后，请手动输入exit并回车")
-        os.system(f"echo pm install -g /data/local/tmp/{filename} | clip")
-        if os.system("adb shell"):
-            print(oct.ColoredText([("启动命令行失败，请截图并联系作者", "red")]))
-    else:
-        if os.system(f"adb shell pm install -g /data/local/tmp/{filename}"):
-            print(oct.ColoredText([("自动安装失败，请尝试使用手动安装", "red")]))
-    
-    ans = input("是否清除缓存(Y/N, defult: N):")
-    if ans.upper() == 'Y':
-        if os.system("adb shell rm -rf /data/local/tmp/*"): #应该没写错吧......
-            print(oct.ColoredText([("清除失败，请截图并联系作者", "red")]))
-        print("清除成功")
-    """
     
 def Installation():
     loop = True
@@ -116,6 +152,7 @@ def Installation():
 
 def LoopInstall():
     # 选择文件夹
+    print("选择要上传的文件夹")
     path = easygui.diropenbox("选择文件夹", "选择文件夹")
     if path == None:
         easygui.msgbox("请重新选择文件夹，若再次不选择文件夹将会退出安装")
@@ -142,7 +179,7 @@ def LoopInstall():
     copy(cmdstr[:-2])
     os.system("adb shell")
 
-            
+############################### 卸载相关 ################################################
 
 def Uninstallation():
     print(oct.ColoredText([("此功能需有一定android开发基础，若不理解什么是包名，请安装", "normal"), 
@@ -170,6 +207,16 @@ def Uninstallation():
         if os.system(f"adb shell pm uninstall {uninstallpackage}"):
             print(oct.ColoredText([("自动卸载失败，请尝试使用手动卸载", "red")]))
         
+########################################## 激活/禁用相关 #####################################################
+
+def ExecCommand(cmd: str, before_msg: str = "激活中...", after_msg: str = "激活成功！", 
+                fail_msg: str = oct.ColoredText([("激活失败，请截图并联系作者", "red")])):
+    print(before_msg)
+    if os.system(cmd) == 0:
+        print(after_msg)
+    else:
+        print(fail_msg)
+
 def DisableAutonavi():
     print("此功能的原理是禁用原车机导航，仪表盘上的地图显示和车道显示可能会失效")
     if input("是否禁用？(Y/N, defult: Y)").upper() != "N":
@@ -186,6 +233,8 @@ def EnableAutonavi():
         else:
             print(oct.ColoredText([("启用失败，请截图并联系作者", "red")]))
 
+
+########################################## 快捷指令相关 ################################################
 def ShowSolution():
     print("先进入驾享模式")
     print("打开新装的高德的设置->播报")
@@ -202,20 +251,8 @@ def ADBMode():
             break
         if os.system(command) != 0:
             print(oct.ColoredText([("该条指令报错，请检查输入是否正确", "red")]))
-            
-def ActiveShizuku():
-    print("激活中...")
-    if os.system("adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh") == 0:
-        print("激活成功！")
-    else:
-        print(oct.ColoredText([("激活失败，请截图并联系作者", "red")]))
 
-def ActivePermissiondog():
-    print("激活中...")
-    if os.system("adb shell sh /storage/emulated/0/Android/data/com.web1n.permissiondog/files/starter.sh") == 0:
-        print("激活成功！")
-    else:
-        print(oct.ColoredText([("激活失败，请截图并联系作者", "red")]))
+
 
 def DelCache():
     print("当前/data/local/tmp目录下已用大小: ")
@@ -231,6 +268,7 @@ def DelCache():
 
 
 if __name__ == '__main__':
+    ########################################## 文件拖动相关 #################################################
     parser = argparse.ArgumentParser(description='A Installer for Chery-Tiggo9')
     parser.add_argument('-v', '--version', action='version', version=VERSION)
     parser.add_argument('directory', nargs='?', default=None, help='an optional directory to process')
@@ -243,21 +281,7 @@ if __name__ == '__main__':
 
     print("---------------初始化---------------")
 
-    modes = [oct.ColoredText([("退出程序", "red")]), 
-             oct.ColoredText([("安装软件", "yellow")]), 
-             oct.ColoredText([("卸载软件(需要你知道卸载软件的包名)", "yellow")]),
-             oct.ColoredText([("解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", "magenta")]), 
-             oct.ColoredText([("解禁原车机高德地图(恢复原车机高德地图)", "magenta")]), 
-             oct.ColoredText([("头枕播放解决方案", "cyan")]), 
-             oct.ColoredText([("adb输入指令模式", "cyan")]), 
-             oct.ColoredText([("激活shizuku", "blue")]),
-             oct.ColoredText([("激活权限狗", "blue")]), 
-             oct.ColoredText([("清除缓存", "green")]),  
-             oct.ColoredText([("获取帮助", "green")]), 
-             oct.ColoredText([("更新程序", "green")]),
-             oct.ColoredText([("批量安装", "yellow")])]
-    ModeChooser = modechooser.Mode(modes)
-
+    ########################################## 主程序 #####################################################
     while True:
         mode = chooseMode()
         if mode != ModeChooser.wrong_code:
@@ -267,28 +291,22 @@ if __name__ == '__main__':
             elif mode == 1:
                 Installation()
             elif mode == 2:
-                Uninstallation()
+                LoopInstall()
             elif mode == 3:
-                DisableAutonavi()
+                Uninstallation()
             elif mode == 4:
-                EnableAutonavi()
+                # choosemode2
+                submenu()
             elif mode == 5:
-                ShowSolution()
-            elif mode == 6:
                 ADBMode()
-            elif mode == 7:
-                ActiveShizuku()
-            elif mode == 8:
-                ActivePermissiondog()
-            elif mode == 9:
+            elif mode == 6:
                 DelCache()
-            elif mode == 10:
+            elif mode == 7:
                 os.system("start https://github.com/zuo-qirun/Chery-Tiggo9-Install-software/wiki")
-            elif mode == 11:
+            elif mode == 8:
                 # subprocess.run(['runas', '/user:Administrator', '"pythonw ' + script_path + '"'])
                 subprocess.Popen("./update.exe")
                 sys.exit(0)
-            elif mode == 12:
-                LoopInstall()
-        os.system("pause")
-        os.system("cls")
+        if mode != 4:
+            os.system("pause")
+            os.system("cls")
