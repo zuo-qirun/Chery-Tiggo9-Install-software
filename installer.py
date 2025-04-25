@@ -19,9 +19,12 @@ modes = [oct.ColoredText([("退出程序", "red")]),
             oct.ColoredText([("卸载软件(需要你知道卸载软件的包名)", "yellow")]),
             oct.ColoredText([("快捷指令", "magenta")]), 
             oct.ColoredText([("adb输入指令模式", "cyan")]), 
-            oct.ColoredText([("清除缓存", "green")]),  
+            oct.ColoredText([("清除缓存", "blue")]),  
             oct.ColoredText([("获取帮助", "green")]), 
-            oct.ColoredText([("更新程序", "green")])]
+            oct.ColoredText([("更新程序", "green")])] # ,
+            # oct.ColoredText([("更新更新程序", "green")])]
+
+
 submodes = [oct.ColoredText([("返回上一级", "red")]),  # 0
             oct.ColoredText([("头枕播放解决方案", "normal")]), # 1
             oct.ColoredText([("解决安装后高德与原车机高德HUD闪的问题(禁用原车机高德地图)", "magenta")]),  # 2
@@ -76,17 +79,23 @@ def submenu():
         elif submode == 3:
             EnableAutonavi()
         elif submode == 4:
+            # 激活shizuku
             ExecCommand('adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh')
         elif submode == 5:
-            ExecCommand("adb shell sh /storage/emulated/0/Android/data/com.web1n.permissiondog/files/stopper.sh")
+            # 激活权限狗(仅一次 下次重启后无效)
+            ExecCommand("adb shell sh /storage/emulated/0/Android/data/com.web1n.permissiondog/files/starter.sh")
         elif submode == 6:
+            # 激活tasker相关
             ExecCommand('adb shell pm grant net.dinglisch.android.taskerm android.permission.READ_LOGS')
             ExecCommand('adb shell pm grant net.dinglisch.android.taskerm android.permission.WRITE_SECURE_SETTINGS')
         elif submode == 7:
+            # 激活无障碍管理器
             ExecCommand('adb shell pm grant com.accessibilitymanager android.permission.WRITE_SECURE_SETTINGS')
         elif submode == 8:
-            ExecCommand('adb shell dpm set-device-owner web1n.stopapp/.receiver.AdminReceiver')
+            # 激活小黑屋
+            ExecCommand('adb shell dpm set-device-owner web1n.stopapp/.receiver.AdminReceiver', fail_msg=oct.ColoredText([("激活失败，请检查是否已退出所有账号", "red")]))
         elif submode == 9:
+            # 开启无线调试(port: 5555)
             ExecCommand('adb tcpip 5555')
         os.system('pause & cls')
 
@@ -307,6 +316,8 @@ if __name__ == '__main__':
                 # subprocess.run(['runas', '/user:Administrator', '"pythonw ' + script_path + '"'])
                 subprocess.Popen("./update.exe")
                 sys.exit(0)
+            # elif mode == 9:
+
         if mode != 4:
             os.system("pause")
             os.system("cls")

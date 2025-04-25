@@ -4,6 +4,19 @@ import os
 import subprocess
 from tqdm import tqdm
 
+def download_file(update_url):
+    print("正在下载升级包...")
+    update_result = requests.get(update_url, stream=True)
+    total_size = int(update_result.headers.get('content-length', 0))
+    with open("installer.exe", "wb") as f:
+        for data in tqdm(update_result.iter_content(chunk_size=1024), total=total_size/1024, unit=' KB', unit_scale=True):
+            f.write(data)
+    print("升级成功")
+    os.system("pause")
+    os.system('cls')
+    subprocess.run(["installer.exe"], shell=True)
+    exit(0)
+
 def update_software():
     # 备份当前版本
     print("正在备份当前版本...")
@@ -41,23 +54,12 @@ def update_software():
                 print("取消升级")
             else:
                 print("开始升级")
-                print("正在下载升级包...")
-                update_result = requests.get(update_url, stream=True)
-                total_size = int(update_result.headers.get('content-length', 0))
-                with open("installer.exe", "wb") as f:
-                    for data in tqdm(update_result.iter_content(chunk_size=4096), total=total_size//4096, unit='KB', unit_scale=True):
-                        f.write(data)
-                subprocess.run(["installer.exe", "/S"], shell=True)
-                print("升级成功")
+                download_file(update_url)
+               
     except OSError:
         print("未找到安装程序或安装程序已损坏")
         print("开始重新安装")
-        print("正在下载安装包...")
-        update_result = requests.get(update_url)
-        print("下载完成，正在安装...")
-        with open("installer.exe", "wb") as f:
-            f.write(update_result.content)
-        print("升级成功")
+        download_file(update_url)
     except:
         print("升级失败，已为您回退到当前版本")
         with open("installer.exe.bak", "rb") as backup_file:
