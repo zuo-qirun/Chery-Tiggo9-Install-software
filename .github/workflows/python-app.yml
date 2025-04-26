@@ -28,6 +28,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Test with pytest
+    - name: Make Installer exe
       run: |
         pyinstaller -F installer.py
