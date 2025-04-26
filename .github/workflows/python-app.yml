@@ -31,3 +31,9 @@ jobs:
     - name: Make Installer exe
       run: |
         pyinstaller -F installer.py
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: dist/installer
+
