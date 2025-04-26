@@ -67,5 +67,9 @@ def update_software():
         with open("installer.exe", "wb") as f:
             f.write(backup_data)
 if __name__ == "__main__":
+    try:
+        update_software()
+    except:
+        print("升级失败，请检查网络连接或稍后再试")
     update_software()
     os.system("pause")
