@@ -57,9 +57,9 @@ jobs:
       with:
         name: LinuxInstaller
         path: dist/installer
-  Make Installer on MacOS:
+  MacOS:
     runs-on: macos-latest
-    
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.10
