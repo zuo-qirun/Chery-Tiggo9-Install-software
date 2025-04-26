@@ -1,0 +1,37 @@
+# This workflow will install Python dependencies, and make an installer for the application.
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Application on MacOS 13
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+    runs-on: macos-13
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Make Installer exe
+      run: |
+        pyinstaller -F installer.py
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: MacOS13Installer
+        path: dist/installer
+
