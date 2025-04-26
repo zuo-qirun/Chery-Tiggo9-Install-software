@@ -1,4 +1,5 @@
 easygui
 requests
 tqdm
+pyperclip
 #pywin32
