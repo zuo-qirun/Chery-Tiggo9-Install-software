@@ -34,7 +34,8 @@ submodes = [oct.ColoredText([("返回上一级", "red")]),  # 0
             oct.ColoredText([("激活tasker相关", "blue")]), # 6
             oct.ColoredText([("激活无障碍管理器", "blue")]), # 7
             oct.ColoredText([("激活小黑屋", "blue")]), # 8
-            oct.ColoredText([("开启无线调试(port: 5555)", "yellow")])] # 9
+            oct.ColoredText([("开启无线调试(port: 5555)", "yellow")]), # 9
+            oct.ColoredText([("重启adb守护进程", "yellow")])] # 10
 
             
 ModeChooser = modechooser.Mode(modes)
@@ -97,6 +98,10 @@ def submenu():
         elif submode == 9:
             # 开启无线调试(port: 5555)
             ExecCommand('adb tcpip 5555')
+        elif submode == 10:
+            # 重启adb守护进程
+            ExecCommand('adb kill-server')
+            ExecCommand('adb start-server')
         os.system('pause & cls')
 
 ########################################## 安装相关 ############################################
@@ -178,7 +183,7 @@ def LoopInstall():
         if file[-4:] == ".apk":
             num += 1
             print(f"正在处理: {num}. {file}")
-            cmdstr += 'pm install -g /data/local/tmp/' + UploadAndInstall(os.path.join(path, file), False, str(num)) + ' & '
+            cmdstr += 'pm install -g /data/local/tmp/' + UploadAndInstall(os.path.join(path, file), install=False, default_text=str(num)) + ' & '
     print(oct.ColoredText([("请", "normal"), 
                             ("右键这条信息", "red"), 
                             (f"，或复制:  {cmdstr[:-2]}, 并", "normal"), 
