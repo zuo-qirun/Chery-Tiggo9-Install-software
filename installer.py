@@ -33,9 +33,11 @@ submodes = [oct.ColoredText([("返回上一级", "red")]),  # 0
             oct.ColoredText([("激活权限狗(仅一次 下次重启后无效)", "blue")]), # 5
             oct.ColoredText([("激活tasker相关", "blue")]), # 6
             oct.ColoredText([("激活无障碍管理器", "blue")]), # 7
-            oct.ColoredText([("激活小黑屋", "blue")]), # 8
-            oct.ColoredText([("开启无线调试(port: 5555)", "yellow")]), # 9
-            oct.ColoredText([("重启adb守护进程", "yellow")])] # 10
+            oct.ColoredText([("激活导航投屏软件 (包名 com.navi.tool)", "blue")]), # 8
+            oct.ColoredText([("激活悬浮窗 (包名 com.dayang)", "blue")]), # 9
+            oct.ColoredText([("激活小黑屋", "blue")]), # 10
+            oct.ColoredText([("开启无线调试(port: 5555)", "yellow")]), # 11
+            oct.ColoredText([("重启adb守护进程", "yellow")])] # 12
 
             
 ModeChooser = modechooser.Mode(modes)
@@ -93,12 +95,18 @@ def submenu():
             # 激活无障碍管理器
             ExecCommand('adb shell pm grant com.accessibilitymanager android.permission.WRITE_SECURE_SETTINGS')
         elif submode == 8:
+            # 激活导航投屏软件 (包名 com.navi.tool)
+            ExecCommand('adb shell pm grant com.navi.tool android.permission.READ_LOGS', fail_msg=oct.ColoredText([("激活失败，请检查是否安装com.navi.tool", "red")]))
+        elif submode == 9:
+            # 激活悬浮窗 (包名 com.dayang)
+            ExecCommand('adb shell appops set com.dayang SYSTEM_ALERT_WINDOW allow', fail_msg=oct.ColoredText([("激活失败，请检查是否安装com.dayang", "red")]))
+        elif submode == 10:
             # 激活小黑屋
             ExecCommand('adb shell dpm set-device-owner web1n.stopapp/.receiver.AdminReceiver', fail_msg=oct.ColoredText([("激活失败，请检查是否已退出所有账号", "red")]))
-        elif submode == 9:
+        elif submode == 11:
             # 开启无线调试(port: 5555)
             ExecCommand('adb tcpip 5555')
-        elif submode == 10:
+        elif submode == 12:
             # 重启adb守护进程
             ExecCommand('adb kill-server')
             ExecCommand('adb start-server')

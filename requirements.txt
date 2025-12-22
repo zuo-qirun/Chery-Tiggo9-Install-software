@@ -3,3 +3,5 @@ requests
 tqdm
 pyperclip
 #pywin32
+#pyinstaller
+#nuitka
